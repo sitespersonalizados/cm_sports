@@ -1,68 +1,20 @@
 let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
-let produtoSelecionado = null;
-let precoSelecionado = 0;
-let tamanhoSelecionado = null;
 
-// Abre modal com produto e preço
-function abrirModalTamanho(nome, preco) {
-  produtoSelecionado = nome;
-  precoSelecionado = preco;
-  tamanhoSelecionado = null; // limpa seleção anterior
+// Adiciona direto ao carrinho
+function adicionarAoCarrinho(nome, preco) {
+  const tamanho = "Padrão"; // ou outro valor que desejar
 
-  const modal = document.getElementById('modal-tamanho');
-  if (modal) {
-    modal.style.display = 'flex';
-
-    const modalTitulo = document.getElementById('modal-produto-nome');
-    if (modalTitulo) modalTitulo.innerText = `Selecionar Tamanho - ${nome}`;
-
-    // Limpa cores dos botões
-    const botoes = document.querySelectorAll('.modal-conteudo .tamanhos button');
-    botoes.forEach(btn => btn.classList.remove('selecionado'));
-  }
-}
-
-// Fecha modal
-function fecharModalTamanho() {
-  const modal = document.getElementById('modal-tamanho');
-  if (modal) modal.style.display = 'none';
-}
-
-// Seleciona tamanho
-function selecionarTamanho(tamanho) {
-  tamanhoSelecionado = tamanho;
-
-  const botoes = document.querySelectorAll('.modal-conteudo .tamanhos button');
-  botoes.forEach(btn => btn.classList.remove('selecionado'));
-
-  const btnSelecionado = document.querySelector(`.modal-conteudo .tamanhos button[data-tamanho="${tamanho}"]`);
-  if (btnSelecionado) btnSelecionado.classList.add('selecionado');
-}
-
-// Confirma tamanho e adiciona ao carrinho
-function confirmarTamanho() {
-  if (!tamanhoSelecionado) {
-    alert('Por favor, selecione um tamanho!');
-    return;
-  }
-
-  const itemExistente = carrinho.find(item => item.nome === produtoSelecionado && item.tamanho === tamanhoSelecionado);
+  const itemExistente = carrinho.find(item => item.nome === nome && item.tamanho === tamanho);
 
   if (itemExistente) {
     itemExistente.quantidade += 1;
   } else {
-    carrinho.push({ nome: produtoSelecionado, preco: precoSelecionado, quantidade: 1, tamanho: tamanhoSelecionado });
+    carrinho.push({ nome, preco, quantidade: 1, tamanho });
   }
 
   localStorage.setItem('carrinho', JSON.stringify(carrinho));
   atualizarCarrinhoLateral();
-  alert(`${produtoSelecionado} (${tamanhoSelecionado}) adicionado ao carrinho.`);
-
-  produtoSelecionado = null;
-  precoSelecionado = 0;
-  tamanhoSelecionado = null;
-
-  fecharModalTamanho();
+  alert(`${nome} adicionado ao carrinho.`);
 }
 
 // Atualiza carrinho lateral
@@ -141,7 +93,7 @@ function finalizarWhatsApp() {
 
   mensagem += `\n*Total: R$ ${total.toFixed(2)}*`;
 
-  const numero = "5599999999999";
+  const numero = "5599999999999"; // troque pelo seu WhatsApp
   const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
   window.open(url, '_blank');
 
